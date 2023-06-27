@@ -95,7 +95,19 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h2 id="Java对象结构"><a href="#Java对象结构" class="headerlink" title="Java对象结构"></a>Java对象结构</h2><h3 id="1"><a href="#1" class="headerlink" title="1."></a>1.</h3><h3 id="2"><a href="#2" class="headerlink" title="2."></a>2.</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">	System.out.println(<span class="string">&quot;Hello, world&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+        <h2 id="Java对象内存结构"><a href="#Java对象内存结构" class="headerlink" title="Java对象内存结构"></a>Java对象内存结构</h2><h3 id="0-前言"><a href="#0-前言" class="headerlink" title="0. 前言"></a>0. 前言</h3><pre><code>一个Java对象在内存中的结构是怎么样的呢？ 是如下的三个部分吗？ 
+1. 对象头	
+2. 实例数据
+3. 对齐填充
+毫无疑问，这么回答绝对不能说是错的。
+但是对象头中有什么呢？ 为什么需要有对象头呢？ 实例数据可以理解。 
+对齐填充的目的又是什么呢？ 废话少说，下面开始解答这些问题。
+</code></pre>
+<h3 id="1-对象头"><a href="#1-对象头" class="headerlink" title="1. 对象头"></a>1. 对象头</h3><h4 id="1-1-MarkWord-标记字段"><a href="#1-1-MarkWord-标记字段" class="headerlink" title="1.1. MarkWord (标记字段)"></a>1.1. MarkWord (标记字段)</h4><pre><code>这部分比较有意思，根据对象的状态来区分不同的状态位，从而区分不同的存储结构。
+有以下几种状态：
+1. 
+</code></pre>
+<h3 id="2"><a href="#2" class="headerlink" title="2."></a>2.</h3>
       
     </div>
     <footer class="article-footer">
@@ -146,6 +158,10 @@
 <h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
 
 <p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+<h3 id="Hello-World-to-everybody"><a href="#Hello-World-to-everybody" class="headerlink" title="Hello World to everybody"></a>Hello World to everybody</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">System.out.println(<span class="string">&quot;Hello, world&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<h3 id="deploy-aito"><a href="#deploy-aito" class="headerlink" title="deploy aito"></a>deploy aito</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo g -d</span><br></pre></td></tr></table></figure>
 
       
     </div>
