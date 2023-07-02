@@ -15,7 +15,7 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2019/4/29/16a670d680dd485f~tplv-t2oaga2asx-zoom-in-crop-mark:4536:0:0:0.image">
 <meta property="article:published_time" content="2023-06-26T13:45:47.000Z">
-<meta property="article:modified_time" content="2023-06-27T15:23:20.715Z">
+<meta property="article:modified_time" content="2023-07-02T04:57:58.609Z">
 <meta property="article:author" content="djzeng">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2019/4/29/16a670d680dd485f~tplv-t2oaga2asx-zoom-in-crop-mark:4536:0:0:0.image">
@@ -129,7 +129,7 @@
 <h4 id="1-3-1-指针压缩"><a href="#1-3-1-指针压缩" class="headerlink" title="1.3.1 指针压缩"></a>1.3.1 指针压缩</h4><p>   其实‘指针压缩’这名词取的很迷惑，其实学过内存寻址相关知识的人都了解。</p>
 <p>   CPU寻址的最小单位是byte，因此对于32位的操作系统来说（寄存器32位），最大的寻址范围是4G。</p>
 <p>   而由于规范了对象起始地址必须是8byte的整数倍，是不是意味着，对于JVM来说，寻址的最小单位变成8byte了。 </p>
-<p>   因此原本4G内存的JVM，其中的对象指针大小， 现在只用0.5byte即可。（理论上是这样，但实际分配的还是4byte）<br>   而对于32G内存的JVM，其中的对象指针大小是4byte刚好合适。 (如果内存再大， 4byte是不支持了)。</p>
+<p>   因此原本4G内存的JVM，其中的对象指针大小， 现在只用0.5byte即可。（理论上是这样，但实际分配的还是4byte，因为32位JVM都分配4byte）<br>   而对于32G内存的JVM，其中的对象指针大小是4byte刚好合适。 (如果内存再大， 4byte是不支持了)。</p>
 <h4 id="1-3-2-内存管理规范"><a href="#1-3-2-内存管理规范" class="headerlink" title="1.3.2. 内存管理规范"></a>1.3.2. 内存管理规范</h4><p>对齐的好处显而易见: </p>
 <ol>
 <li><p>如果不对齐，那么分配空间时，对于不规则的内存碎片，就是头疼的情况。</p>
@@ -137,17 +137,15 @@
 <li><p>如果是对齐，那么碎片的空间都是8的倍数，更容易计算出哪块空间适合当前对象分配。</p>
 </li>
 </ol>
-<h4 id="1-3-3-浪费空间，更容易导致GC"><a href="#1-3-3-浪费空间，更容易导致GC" class="headerlink" title="1.3.3. 浪费空间，更容易导致GC"></a>1.3.3. 浪费空间，更容易导致GC</h4><p>事物总有两面，对齐其实是种空间换时间的方法；</p>
+<h4 id="1-3-4-浪费空间，更容易导致GC"><a href="#1-3-4-浪费空间，更容易导致GC" class="headerlink" title="1.3.4. 浪费空间，更容易导致GC"></a>1.3.4. 浪费空间，更容易导致GC</h4><p>事物总有两面，对齐其实是种空间换时间的方法；</p>
 <p>对齐使用了额外的空间， 造成了内存分配计算的便利。但是也分配一些无用数据占用内存，导致频繁的FullGC;</p>
 <h4 id="1-3-4-对齐总结"><a href="#1-3-4-对齐总结" class="headerlink" title="1.3.4. 对齐总结"></a>1.3.4. 对齐总结</h4><p>总而言之，言而总之，对齐到8字节，是利大于弊的。 </p>
 <p>好处是内存管理规范 + 指针压缩，坏处是无用数据占内存导致GC。</p>
 <p>但是对齐到16字节以及更大，就将坏处放得过大，明显是不合适的。</p>
-<p>若是对齐放小到1字节，其实有点过分， 32位操作系统只能支持4G的JVM内存了，而且内存管理时很尴尬，碎片太小不规则。</p>
+<p>若是对齐放小到1字节，那其实就没开启字节压缩嘛。对于32位的JVM最大的寻址范围就只能是4G了。</p>
 <h3 id="4-问答"><a href="#4-问答" class="headerlink" title="4. 问答"></a>4. 问答</h3><p>回答前面的问题</p>
-<p>为什么需要有对象头呢？ </p>
-<p>解答： 对象头可以记录一些关键的状态位数据，以及指针的信息，方便特殊处理。</p>
-<p>对齐填充的目的又是什么呢？</p>
-<p>解答： 指针压缩（可以让JVM用更小的指针大小，寻址更大的内存空间） + 规范内存管理（优化内存分配计算等逻辑）。</p>
+<h4 id="4-1-为什么需要有对象头呢？"><a href="#4-1-为什么需要有对象头呢？" class="headerlink" title="4.1 为什么需要有对象头呢？"></a>4.1 为什么需要有对象头呢？</h4><p>解答： 对象头可以记录一些关键的状态位数据，以及指针的信息，方便特殊处理。</p>
+<h4 id="4-2-对齐填充的目的又是什么呢？"><a href="#4-2-对齐填充的目的又是什么呢？" class="headerlink" title="4.2 对齐填充的目的又是什么呢？"></a>4.2 对齐填充的目的又是什么呢？</h4><p>解答： 指针压缩（可以让JVM用更小的指针大小，寻址更大的内存空间） + 规范内存管理（优化内存分配计算等逻辑）。</p>
 
       
     </div>
