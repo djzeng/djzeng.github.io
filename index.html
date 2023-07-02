@@ -73,6 +73,58 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-Redis访问突然变慢了" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/07/02/Redis%E8%AE%BF%E9%97%AE%E7%AA%81%E7%84%B6%E5%8F%98%E6%85%A2%E4%BA%86/" class="article-date">
+  <time class="dt-published" datetime="2023-07-02T05:02:35.000Z" itemprop="datePublished">2023-07-02</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2023/07/02/Redis%E8%AE%BF%E9%97%AE%E7%AA%81%E7%84%B6%E5%8F%98%E6%85%A2%E4%BA%86/">Redis访问突然变慢了</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h3 id="1-前言"><a href="#1-前言" class="headerlink" title="-1. 前言"></a>-1. 前言</h3><pre><code>从标题可以看出，这大概率是一道面试题。
+面试官： Redis访问的耗时突然增加了， 如何快速定位到问题所在？
+我: ... ... 问下运维就知道了。
+GG
+</code></pre>
+<h3 id="0-分析流程"><a href="#0-分析流程" class="headerlink" title="0. 分析流程"></a>0. 分析流程</h3><pre><code>分析Redis访问耗时变慢，从计算机硬件方面的表现来说，可能会有两种场景：
+1. CPU负载上升
+2. 网络波动
+对于网络波动方面，是真的要找运维或者其他同事，帮忙登录Redis的机器看一下具体情况。
+而对于CPU负载上升，很大概率由两种情况导致：
+1. Redis内存不够
+2. Redis存在大量慢指令
+</code></pre>
+<h3 id="Redis内存不够"><a href="#Redis内存不够" class="headerlink" title="Redis内存不够"></a>Redis内存不够</h3><p>当Redis内存不够时，会发生什么，因而导致CPU负载上升，让部分业务语句执行变慢呢？</p>
+<h4 id="1-主动淘汰机制频繁触发"><a href="#1-主动淘汰机制频繁触发" class="headerlink" title="1. 主动淘汰机制频繁触发"></a>1. 主动淘汰机制频繁触发</h4>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/07/02/Redis%E8%AE%BF%E9%97%AE%E7%AA%81%E7%84%B6%E5%8F%98%E6%85%A2%E4%BA%86/" data-id="cljl3l9s5000084uj1fahakdf" data-title="Redis访问突然变慢了" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-Java对象内存布局" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2023/06/26/Java%E5%AF%B9%E8%B1%A1%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80/" class="article-date">
@@ -95,7 +147,7 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h2 id="Java对象内存结构"><a href="#Java对象内存结构" class="headerlink" title="Java对象内存结构"></a>Java对象内存结构</h2><h3 id="0-前言"><a href="#0-前言" class="headerlink" title="0. 前言"></a>0. 前言</h3><pre><code>一个Java对象在内存中的结构是怎么样的呢？ 是如下的三个部分吗？ 
+        <h3 id="0-前言"><a href="#0-前言" class="headerlink" title="0. 前言"></a>0. 前言</h3><pre><code>一个Java对象在内存中的结构是怎么样的呢？ 是如下的三个部分吗？ 
 1. 对象头	
 2. 实例数据
 3. 对齐填充
@@ -231,7 +283,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/06/">June 2023</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/07/">July 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/06/">June 2023</a></li></ul>
     </div>
   </div>
 
@@ -242,6 +294,10 @@
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2023/07/02/Redis%E8%AE%BF%E9%97%AE%E7%AA%81%E7%84%B6%E5%8F%98%E6%85%A2%E4%BA%86/">Redis访问突然变慢了</a>
+          </li>
         
           <li>
             <a href="/2023/06/26/Java%E5%AF%B9%E8%B1%A1%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80/">Java对象内存布局</a>
