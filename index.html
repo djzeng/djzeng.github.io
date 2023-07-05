@@ -133,7 +133,8 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        
+        <h3 id="0-前言"><a href="#0-前言" class="headerlink" title="0. 前言"></a>0. 前言</h3><p>随便聊聊Throwable类提供的方法</p>
+<h3 id="1-Demo"><a href="#1-Demo" class="headerlink" title="1. Demo"></a>1. Demo</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">System.out.println(<span class="string">&quot;Hello, world&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
       
     </div>
     <footer class="article-footer">
@@ -173,9 +174,21 @@
       
         <h3 id="0-前言"><a href="#0-前言" class="headerlink" title="0. 前言"></a>0. 前言</h3><p>从标题可以看出，这大概率又是一道面试题。</p>
 <p>面试官： 我们这边Redis内存不够了，但是我这边老板又不出扩内存，你有啥办法压缩内存，提高整体性能？</p>
-<p>我: 这个，用一些压缩的算法吧。比如。</p>
-<p>GG</p>
-<h3 id="1-特殊业务类型数据"><a href="#1-特殊业务类型数据" class="headerlink" title="1. 特殊业务类型数据"></a>1. 特殊业务类型数据</h3><p>对于</p>
+<p>大概有以下几种方式：</p>
+<h3 id="1-特殊业务类型数据"><a href="#1-特殊业务类型数据" class="headerlink" title="1. 特殊业务类型数据"></a>1. 特殊业务类型数据</h3><p>(1). 对于一些特殊场景的业务数据，比如省份，完全可以1-北京市 2-上海市 3-浙江省, 用数字代替文字。<br>项目工程本地或者本地缓存，存对应的映射关系。 这一定程度上能减少缓存。</p>
+<p>(2). 很多时候，序列化反序列化会使用JSON存储。 对于这种数据，尽量用@JsonProperty来将字段名换成短名。<br>比如requestInfo字段，换成短名T1这样。 也能一定程度上减小缓存大小。</p>
+<h3 id="2-通用压缩算法"><a href="#2-通用压缩算法" class="headerlink" title="2. 通用压缩算法"></a>2. 通用压缩算法</h3><p>由于Redis存储的时候，也是二进制的。完全可以用以下这些压缩算法。<br>(1).  ProtoBuf, 序列化后会生成二进制文件。 比 XML 更小（3 ~ 10倍）、更快（20 ~ 100倍）<br>(2).  zstd， faceBook开源的压缩算法</p>
+<h3 id="3-Redis自带的压缩数据结构（64位）"><a href="#3-Redis自带的压缩数据结构（64位）" class="headerlink" title="3. Redis自带的压缩数据结构（64位）"></a>3. Redis自带的压缩数据结构（64位）</h3><p>Redis提供的几种数据结构中，列表和哈希表结构。其底层的实现，可能会是由压缩列表来实现的。</p>
+<p>以列表举例，正常列表的结构是双向链表，针对其中的一个节点来说，他会拥有如下结构：</p>
+<ol>
+<li>左指针 8字节</li>
+<li>右指针 8字节</li>
+<li>数据 （数据的长度，压缩列表有要求）</li>
+</ol>
+<p>如果开启压缩列表，数据长度要求小于64字节，节点个数小于1024。（虽然可以配置）。<br>其结构可以说，直接省去左右指针，会多一个前一项长度的字段（8bit），以及一些其他头尾节点记录总字节数和结束标志的字段。</p>
+<p>所以近似估计，每个节点的数据算他64字节，那么使用压缩列表，相当于节省了1&#x2F;5的空间。<br>当然压缩列表由于节点个数限制，但是可以采用拆分成多个列表的想法，每当列表长度到达1024的时候，生成新的列表去存储即可。<br>当然这样会增加数据处理的复杂性，但是做成组件通用也是可以接受的。</p>
+<h3 id="4-总结"><a href="#4-总结" class="headerlink" title="4. 总结"></a>4. 总结</h3><p>对于Redis内存不够用的场景，以上减少内存的方案，有些看似可能增加了数据处理的复杂度，对于Redis的操作也多了序列化和反序列化以及一些计算的耗时，<br>但是对于内存满载的场景，无疑是很好的方案，而且反而能加快Redis指令的执行。</p>
+<p>因为内存降下来了， 所以一些持久化进程的压力也下来了， 可能出现的Redis主动淘汰Key的可能性也下来了， 反而会让Redis指令执行加快。</p>
 
       
     </div>
@@ -214,7 +227,7 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h3 id="1-前言"><a href="#1-前言" class="headerlink" title="-1. 前言"></a>-1. 前言</h3><p>从标题可以看出，这大概率是一道面试题。</p>
+        <h3 id="0-前言"><a href="#0-前言" class="headerlink" title="0. 前言"></a>0. 前言</h3><p>从标题可以看出，这大概率是一道面试题。</p>
 <p>面试官： Redis访问的耗时突然增加了， 如何快速定位到问题所在？</p>
 <p>我: … … 问下运维就知道了。</p>
 <p>GG</p>
@@ -236,7 +249,7 @@
 PS: 主动淘汰的算法多种多样。无差别Key随机/LRU移除，对于过期时间key的随机/LRU移除，或者直接返给业务Error（一般不会）。 
 </code></pre>
 <p>所以，当内存不足时，会触发内存的主动淘汰，这会增加CPU的负担，增加Redis指令的执行耗时。</p>
-<h4 id="2-backUp功能拖累"><a href="#2-backUp功能拖累" class="headerlink" title="2. backUp功能拖累"></a>2. backUp功能拖累</h4><p>总所周知，Redis提供了持久化的功能。分以下两种</p>
+<h4 id="2-持久化功能拖累"><a href="#2-持久化功能拖累" class="headerlink" title="2. 持久化功能拖累"></a>2. 持久化功能拖累</h4><p>总所周知，Redis提供了持久化的功能。分以下两种</p>
 <ol>
 <li>RDB持久化（全量备份）： Redis会在指定的间隔时间中，将内存中的数据集快照写入磁盘。<br> 实际上是fork子线程，先将数据集写入临时文件，然后将文件进行替换。</li>
 <li>AOF持久化（增量备份）: Redis会将新增的Redis指令追加到AOF文件末尾。</li>

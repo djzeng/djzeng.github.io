@@ -6,15 +6,15 @@
   
   <title>Redis内存极致压缩 | Stay Hungry, Stay Foolish</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="0. 前言从标题可以看出，这大概率又是一道面试题。 面试官： 我们这边Redis内存不够了，但是我这边老板又不出扩内存，你有啥办法压缩内存，提高整体性能？ 我: 这个，用一些压缩的算法吧。比如。 GG 1. 特殊业务类型数据对于">
+  <meta name="description" content="0. 前言从标题可以看出，这大概率又是一道面试题。 面试官： 我们这边Redis内存不够了，但是我这边老板又不出扩内存，你有啥办法压缩内存，提高整体性能？ 大概有以下几种方式： 1. 特殊业务类型数据(1). 对于一些特殊场景的业务数据，比如省份，完全可以1-北京市 2-上海市 3-浙江省, 用数字代替文字。项目工程本地或者本地缓存，存对应的映射关系。 这一定程度上能减少缓存。 (2). 很多时候">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Redis内存极致压缩">
 <meta property="og:url" content="http://example.com/2023/07/02/Redis%E5%86%85%E5%AD%98%E6%9E%81%E8%87%B4%E5%8E%8B%E7%BC%A9/index.html">
 <meta property="og:site_name" content="Stay Hungry, Stay Foolish">
-<meta property="og:description" content="0. 前言从标题可以看出，这大概率又是一道面试题。 面试官： 我们这边Redis内存不够了，但是我这边老板又不出扩内存，你有啥办法压缩内存，提高整体性能？ 我: 这个，用一些压缩的算法吧。比如。 GG 1. 特殊业务类型数据对于">
+<meta property="og:description" content="0. 前言从标题可以看出，这大概率又是一道面试题。 面试官： 我们这边Redis内存不够了，但是我这边老板又不出扩内存，你有啥办法压缩内存，提高整体性能？ 大概有以下几种方式： 1. 特殊业务类型数据(1). 对于一些特殊场景的业务数据，比如省份，完全可以1-北京市 2-上海市 3-浙江省, 用数字代替文字。项目工程本地或者本地缓存，存对应的映射关系。 这一定程度上能减少缓存。 (2). 很多时候">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2023-07-02T09:39:09.000Z">
-<meta property="article:modified_time" content="2023-07-02T13:23:55.147Z">
+<meta property="article:modified_time" content="2023-07-05T14:35:31.857Z">
 <meta property="article:author" content="djzeng">
 <meta name="twitter:card" content="summary">
   
@@ -99,9 +99,21 @@
       
         <h3 id="0-前言"><a href="#0-前言" class="headerlink" title="0. 前言"></a>0. 前言</h3><p>从标题可以看出，这大概率又是一道面试题。</p>
 <p>面试官： 我们这边Redis内存不够了，但是我这边老板又不出扩内存，你有啥办法压缩内存，提高整体性能？</p>
-<p>我: 这个，用一些压缩的算法吧。比如。</p>
-<p>GG</p>
-<h3 id="1-特殊业务类型数据"><a href="#1-特殊业务类型数据" class="headerlink" title="1. 特殊业务类型数据"></a>1. 特殊业务类型数据</h3><p>对于</p>
+<p>大概有以下几种方式：</p>
+<h3 id="1-特殊业务类型数据"><a href="#1-特殊业务类型数据" class="headerlink" title="1. 特殊业务类型数据"></a>1. 特殊业务类型数据</h3><p>(1). 对于一些特殊场景的业务数据，比如省份，完全可以1-北京市 2-上海市 3-浙江省, 用数字代替文字。<br>项目工程本地或者本地缓存，存对应的映射关系。 这一定程度上能减少缓存。</p>
+<p>(2). 很多时候，序列化反序列化会使用JSON存储。 对于这种数据，尽量用@JsonProperty来将字段名换成短名。<br>比如requestInfo字段，换成短名T1这样。 也能一定程度上减小缓存大小。</p>
+<h3 id="2-通用压缩算法"><a href="#2-通用压缩算法" class="headerlink" title="2. 通用压缩算法"></a>2. 通用压缩算法</h3><p>由于Redis存储的时候，也是二进制的。完全可以用以下这些压缩算法。<br>(1).  ProtoBuf, 序列化后会生成二进制文件。 比 XML 更小（3 ~ 10倍）、更快（20 ~ 100倍）<br>(2).  zstd， faceBook开源的压缩算法</p>
+<h3 id="3-Redis自带的压缩数据结构（64位）"><a href="#3-Redis自带的压缩数据结构（64位）" class="headerlink" title="3. Redis自带的压缩数据结构（64位）"></a>3. Redis自带的压缩数据结构（64位）</h3><p>Redis提供的几种数据结构中，列表和哈希表结构。其底层的实现，可能会是由压缩列表来实现的。</p>
+<p>以列表举例，正常列表的结构是双向链表，针对其中的一个节点来说，他会拥有如下结构：</p>
+<ol>
+<li>左指针 8字节</li>
+<li>右指针 8字节</li>
+<li>数据 （数据的长度，压缩列表有要求）</li>
+</ol>
+<p>如果开启压缩列表，数据长度要求小于64字节，节点个数小于1024。（虽然可以配置）。<br>其结构可以说，直接省去左右指针，会多一个前一项长度的字段（8bit），以及一些其他头尾节点记录总字节数和结束标志的字段。</p>
+<p>所以近似估计，每个节点的数据算他64字节，那么使用压缩列表，相当于节省了1&#x2F;5的空间。<br>当然压缩列表由于节点个数限制，但是可以采用拆分成多个列表的想法，每当列表长度到达1024的时候，生成新的列表去存储即可。<br>当然这样会增加数据处理的复杂性，但是做成组件通用也是可以接受的。</p>
+<h3 id="4-总结"><a href="#4-总结" class="headerlink" title="4. 总结"></a>4. 总结</h3><p>对于Redis内存不够用的场景，以上减少内存的方案，有些看似可能增加了数据处理的复杂度，对于Redis的操作也多了序列化和反序列化以及一些计算的耗时，<br>但是对于内存满载的场景，无疑是很好的方案，而且反而能加快Redis指令的执行。</p>
+<p>因为内存降下来了， 所以一些持久化进程的压力也下来了， 可能出现的Redis主动淘汰Key的可能性也下来了， 反而会让Redis指令执行加快。</p>
 
       
     </div>
