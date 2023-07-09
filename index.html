@@ -134,7 +134,15 @@
     <div class="e-content article-entry" itemprop="articleBody">
       
         <h3 id="0-前言"><a href="#0-前言" class="headerlink" title="0. 前言"></a>0. 前言</h3><p>随便聊聊Throwable类提供的方法</p>
-<h3 id="1-Demo"><a href="#1-Demo" class="headerlink" title="1. Demo"></a>1. Demo</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">System.out.println(<span class="string">&quot;Hello, world&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="1-Demo"><a href="#1-Demo" class="headerlink" title="1. Demo"></a>1. Demo</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">    Arrays.stream(<span class="keyword">new</span> <span class="title class_">Throwable</span>().getStackTrace()).forEach(p -&gt; System.out.println(p.toString()));</span><br><span class="line">    System.out.println(<span class="string">&quot;------&quot;</span>);</span><br><span class="line">    Arrays.stream(getThrowable().getStackTrace()).forEach(p -&gt; System.out.println(p.toString()));</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>输出：</p>
+<pre><code>Test.main(Test.java:8)
+------
+Test.getThrowable(Test.java:14)
+Test.main(Test.java:10)
+</code></pre>
+
       
     </div>
     <footer class="article-footer">
