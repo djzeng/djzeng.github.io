@@ -117,14 +117,24 @@
 <img src = https://zdj1.oss-cn-beijing.aliyuncs.com/%E6%9C%AA%E5%91%BD%E5%90%8D%E6%96%87%E4%BB%B6.png>
 
 
-<h3 id="3-Netty如何检测"><a href="#3-Netty如何检测" class="headerlink" title="3. Netty如何检测"></a>3. Netty如何检测</h3><h4 id="知识点：Reference类-WeakReference类-ReferenceQueue类"><a href="#知识点：Reference类-WeakReference类-ReferenceQueue类" class="headerlink" title="知识点：Reference类 + WeakReference类 + ReferenceQueue类"></a>知识点：Reference类 + WeakReference类 + ReferenceQueue类</h4><p>冷知识：当WeakReference《T》 reference包装的这个T对应的对象被JVM回收后， reference这个对象就会被塞到ReferenceQueue对象中（假如有指定的话）。</p>
+<h3 id="3-Netty如何检测"><a href="#3-Netty如何检测" class="headerlink" title="3. Netty如何检测"></a>3. Netty如何检测</h3><h4 id="知识点：Reference类-WeakReference类-ReferenceQueue类"><a href="#知识点：Reference类-WeakReference类-ReferenceQueue类" class="headerlink" title="知识点：Reference类 + WeakReference类 + ReferenceQueue类"></a>知识点：Reference类 + WeakReference类 + ReferenceQueue类</h4><p>冷知识：当WeakReference&lt;&gt;T reference包装的这个T对应的对象被JVM回收后， reference这个对象就会被塞到ReferenceQueue对象中（假如有指定的话）。</p>
 <p>那么问题来了，谁干这件事情呢？</p>
 <ol>
 <li>JVM GC线程清理完T后，会将reference赋值给静态变量Reference.pending。</li>
 <li>Reference类中的死循环里的tryHandlePending方法，将pending对象取出放入其ReferenceQueue对象中。</li>
 </ol>
-<p> 总结：通过 WeakReference《T》 类 + ReferenceQueue类， 可以将被JVM回收的T对象的信息给记录下来。</p>
-<h4 id="Netty是如何做的"><a href="#Netty是如何做的" class="headerlink" title="Netty是如何做的"></a>Netty是如何做的</h4>
+<p> 总结：通过 WeakReference&lt;&gt;T 类 + ReferenceQueue类， 可以将被JVM回收的T对象的信息给记录下来。</p>
+<h4 id="Netty是如何做的"><a href="#Netty是如何做的" class="headerlink" title="Netty是如何做的"></a>Netty是如何做的</h4><p>对于每一个ByteBuf类，都会有一个WeakReference类指向它(Netty中这个类叫DefaultResourceLeak)。<br>这个WeakReference类中有两个关键成员对象：</p>
+<ol>
+<li>ReferenceQueue对象： 当任意一个DefaultResourceLeak被垃圾回收后，都会放置到该对象中。</li>
+<li>Set<DefaultResourceLeak> allLeaks对象： 记录逻辑上正在使用的所有DefaultResourceLeak，<br>当任意一个ByteBuf正常调用其close()等销毁方法的时候，才会移除该DefaultResourceLeak对象的指向。</li>
+</ol>
+<p>因此，当需要检测是否有内存泄露的时候，从ReferenceQueue中拿出弱引用对象DefaultResourceLeak，判断是否还在allLeaks集合中。</p>
+<ol>
+<li>在：意味着泄露，打印异常栈的记录信息。</li>
+<li>不在：意味着没有泄露。</li>
+</ol>
+
       
     </div>
     <footer class="article-footer">
@@ -432,7 +442,7 @@ PS: 主动淘汰的算法多种多样。无差别Key随机/LRU移除，对于过
         
   
     <h1 itemprop="name">
-      <a class="p-name article-title" href="/2023/06/25/hello-world/">Hello World</a>
+      <a class="p-name article-title" href="/2023/06/25/hello-world/">Hexo Command Usage</a>
     </h1>
   
 
@@ -456,12 +466,12 @@ PS: 主动淘汰的算法多种多样。无差别Key随机/LRU移除，对于过
 <h3 id="Hello-World-to-everybody"><a href="#Hello-World-to-everybody" class="headerlink" title="Hello World to everybody"></a>Hello World to everybody</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">System.out.println(<span class="string">&quot;Hello, world&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 
-<h3 id="deploy-aito"><a href="#deploy-aito" class="headerlink" title="deploy aito"></a>deploy aito</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo g -d</span><br></pre></td></tr></table></figure>
+<h3 id="deploy-auto"><a href="#deploy-auto" class="headerlink" title="deploy auto"></a>deploy auto</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo g -d</span><br></pre></td></tr></table></figure>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2023/06/25/hello-world/" data-id="cljbkd17300008sujb8jf0iih" data-title="Hello World" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="http://example.com/2023/06/25/hello-world/" data-id="cljbkd17300008sujb8jf0iih" data-title="Hexo Command Usage" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
