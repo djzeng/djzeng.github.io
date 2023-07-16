@@ -95,7 +95,22 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        
+        <h3 id="题目：-给定一个字符串-s-，请你找出其中不含有重复字符的-最长子串-的长度。"><a href="#题目：-给定一个字符串-s-，请你找出其中不含有重复字符的-最长子串-的长度。" class="headerlink" title="题目： 给定一个字符串 s ，请你找出其中不含有重复字符的 最长子串 的长度。"></a>题目： 给定一个字符串 s ，请你找出其中不含有重复字符的 最长子串 的长度。</h3><h4 id="示例-1"><a href="#示例-1" class="headerlink" title="示例 1:"></a>示例 1:</h4><p>输入: s &#x3D; “abcabcbb”</p>
+<p>输出: 3</p>
+<p>解释: 因为无重复字符的最长子串是 “abc”，所以其长度为 3。</p>
+<h4 id="示例-2"><a href="#示例-2" class="headerlink" title="示例 2:"></a>示例 2:</h4><p>输入: s &#x3D; “bbbbb”</p>
+<p>输出: 1</p>
+<p>解释: 因为无重复字符的最长子串是 “b”，所以其长度为 1。</p>
+<h4 id="示例-3"><a href="#示例-3" class="headerlink" title="示例 3:"></a>示例 3:</h4><p>输入: s &#x3D; “pwwkew”</p>
+<p>输出: 3</p>
+<p>解释: 因为无重复字符的最长子串是 “wke”，所以其长度为 3。<br>     请注意，你的答案必须是 子串 的长度，”pwke” 是一个子序列，不是子串。</p>
+<h4 id="分析："><a href="#分析：" class="headerlink" title="分析："></a>分析：</h4><p>双指针的思路：</p>
+<ol>
+<li>右指针正常往右走，左指针动态调整位置，随时记录左右指针之间的差值的最大值。</li>
+<li>左指针只会向右不会再向左。 </li>
+<li>搞个Map&lt;Character, Integer&gt;记录任意一个字符，最大的索引位置. 帮助左指针定位</li>
+</ol>
+
       
     </div>
     <footer class="article-footer">
